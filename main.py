@@ -72,7 +72,7 @@ def read_words_file(file_path):
             word = line.strip().lower()
 
             # Ensure the word only contains characters a-z and is between 3 and 7 characters long
-            if re.match("^[a-z]{3,7}$", word):
+            if re.match("^[a-z]{3,12}$", word):
                 words.append(word)
             else:
                 raise InvalidWordError(f"Invalid word found: '{word}'")
@@ -95,7 +95,7 @@ def display_board(missed_letters, correct_letters, secret_word):
 
     print('Missed letters:', end=' ')
     for letter in missed_letters:
-        print(letter, end=' ')
+        print(letter.upper(), end=' ')
     print()
 
     blanks = '_' * len(secret_word)
@@ -105,14 +105,14 @@ def display_board(missed_letters, correct_letters, secret_word):
             blanks = blanks[:i] + secret_word[i] + blanks[i + 1:]
 
     for letter in blanks:  # show the secret word with spaces in between each letter
-        print(letter, end=' ')
+        print(letter.upper(), end=' ')
     print()
 
 
 def get_guess(already_guessed):
     # Returns the letter the player entered. This function makes sure the player entered a single letter, and not something else.
     while True:
-        guess = input('Guess a letter.').lower()
+        guess = input('\nGuess a letter: ').lower()
         if len(guess) != 1:
             print('Please enter a single letter.')
         elif guess in already_guessed:
@@ -125,18 +125,16 @@ def get_guess(already_guessed):
 
 def play_again():
     # This function returns True if the player wants to play again, otherwise it returns False.
-    print('Do you want to play again? (yes or no)')
-    return input().lower().startswith('y')
+    return input("\nDo you want to play again? ").lower().startswith('y')
 
 
 def main():
-    print('H A N G M A N')
+    print('C H E S S - H A N G M A N')
 
     words = []
 
     try:
         words = read_words_file('words.txt')
-        print(words)
     except InvalidWordError as e:
         print(e)
         sys.exit(1)
@@ -162,7 +160,7 @@ def main():
                     found_all_letters = False
                     break
             if found_all_letters:
-                print('Yes! The secret word is "' + secret_word + '"! You have won!')
+                print('Yes! The secret word is "' + secret_word.upper() + '"! You have won!')
                 game_is_done = True
         else:
             missed_letters = missed_letters + guess
@@ -170,8 +168,9 @@ def main():
             # Check if player has guessed too many times and lost
             if len(missed_letters) == len(HANGMAN_PICS) - 1:
                 display_board(missed_letters, correct_letters, secret_word)
-                print('You have run out of guesses! After ' + str(len(missed_letters)) + ' missed guesses and ' + str(
-                    len(correct_letters)) + ' correct guesses, the word was "' + secret_word + '"')
+                print(
+                    '\nYou have run out of guesses! You had ' + str(len(missed_letters)) + ' missed guesses and ' + str(
+                        len(correct_letters)) + ' correct guesses.\nThe word was "' + secret_word.upper() + '"')
                 game_is_done = True
 
         # Ask the player if they want to play again (but only if the game is done).
